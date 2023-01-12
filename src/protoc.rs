@@ -12,6 +12,7 @@ pub fn compile_proto(
     include: &Path,
     server_base: &Path,
     cs_out: &Path,
+    protoc_path: &Path,
 ) -> Result<()> {
     let rebased = rebase_path(proto, server_base);
     // Strip file name
@@ -41,7 +42,9 @@ pub fn compile_proto(
     let proto_cs_namespace = get_csharp_namespace(proto)?;
 
     debug!("Invoking protoc");
-    let output = Command::new("protoc")
+    let protoc_path = protoc_path.to_str().unwrap_or("protoc");
+
+    let output = Command::new(protoc_path)
         .args([
             format!("-I={}", include.to_string_lossy()), // Include dir
             format!("--csharp_out={}", outdir.to_string_lossy()), // C# out dir
